@@ -8,7 +8,7 @@ export default function Home() {
   const [board, setBoard] = useState([
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 0, 0, 0, 0],
     [0, 0, 0, 1, 0, 0, 0, 0],
     [0, 0, 0, 2, 2, 0, 0, 0],
     [0, 0, 0, 0, 2, 0, 0, 0],
@@ -18,10 +18,17 @@ export default function Home() {
   const clickHandler = (x: number, y: number) => {
     console.log(x, y);
     const newBoard = structuredClone(board);
+    let ny = y + 1;
     if (board[y][x] !== 0) return;
-    if (board[y + 1] !== undefined && board[y + 1][x] === 2 / turnColor) {
-      newBoard[y][x] = turnColor;
-      setTurnColor(2 / turnColor);
+    while (board[ny] !== undefined && board[ny][x] === 2 / turnColor) {
+      if (board[ny + 1][x] === turnColor) {
+        newBoard[y][x] = turnColor;
+        for (let cy = y; cy <= ny; cy++) {
+          newBoard[cy][x] = turnColor;
+        }
+        setTurnColor(2 / turnColor);
+      }
+      ny += 1;
     }
     setBoard(newBoard);
   };
