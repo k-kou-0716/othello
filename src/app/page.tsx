@@ -29,14 +29,19 @@ export default function Home() {
       [-1, 0],
       [-1, -1],
     ];
-
     if (board[y][x] !== 0) return;
     direcitons.forEach(([dx, dy]) => {
+      let ny = y + dy;
+      let nx = x + dx;
       while (board[y + dy][x + dx] !== undefined && board[y + dy][x + dx] === 2 / turnColor) {
         if (board[y + dy * 2][x + dx * 2] === turnColor) {
-          newBoard[y][x] = turnColor;
+          for (let cy = y; cy <= ny + 1; cy++) {
+            newBoard[y][x] = turnColor;
+          }
           setTurnColor(2 / turnColor);
         }
+        ny += dy;
+        nx += dx;
       }
     });
     setBoard(newBoard);
