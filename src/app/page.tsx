@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 'use client';
 
 import { useState } from 'react';
@@ -5,8 +6,8 @@ import styles from './page.module.css';
 
 export default function Home() {
   //波線の原因を探す
-  const [turnColor, setTurnColor] = useState(1);
-  const [board, setBoard] = useState([
+  const [turnColor, setTurnColor] = useState<number>(1);
+  const [board, setBoard] = useState<number[][]>([
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
