@@ -29,22 +29,42 @@ export default function Home() {
       [-1, 0],
       [-1, -1],
     ];
+
     if (board[y][x] !== 0) return;
+    let flippedAny = false;
     direcitons.forEach(([dx, dy]) => {
-      let ny = y + dy;
-      let nx = x + dx;
-      while (board[y + dy][x + dx] !== undefined && board[y + dy][x + dx] === 2 / turnColor) {
-        if (board[y + dy * 2][x + dx * 2] === turnColor) {
-          for (let cy = y; cy <= ny + 1; cy++) {
-            newBoard[y][x] = turnColor;
-          }
-          setTurnColor(2 / turnColor);
-        }
+      let ny = y + dy,
+        nx = x + dx;
+      const toFlip = [];
+      while (
+        ny >= 0 &&
+        ny < board.length &&
+        nx >= 0 &&
+        nx < board[0].length &&
+        board[ny][nx] === 2 / turnColor
+      ) {
+        toFlip.push([nx, ny]);
         ny += dy;
         nx += dx;
+        if (
+          toFlip.length > 0 &&
+          ny >= 0 &&
+          ny < board.length &&
+          nx >= 0 &&
+          nx < board[0].length &&
+          board[ny][nx] === turnColor
+        ) {
+          toFlip.forEach(([fx, fy]) => {
+            newBoard[fy][fx] = turnColor;
+          });
+          flippedAny = true;
+        }
       }
     });
+    if (!flippedAny) return;
+    newBoard[y][x] = turnColor;
     setBoard(newBoard);
+    setTurnColor(2 / turnColor);
   };
 
   return (
