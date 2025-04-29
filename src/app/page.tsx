@@ -4,6 +4,7 @@ import { useState } from 'react';
 import styles from './page.module.css';
 
 export default function Home() {
+  //波線の原因を探す
   const [turnColor, setTurnColor] = useState(1);
   const [board, setBoard] = useState([
     [0, 0, 0, 0, 0, 0, 0, 0],
@@ -15,24 +16,55 @@ export default function Home() {
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
   ]);
+
+  const directions = [
+    [0, -1],
+    [1, -1],
+    [1, 0],
+    [1, 1],
+    [0, 1],
+    [-1, 1],
+    [-1, 0],
+    [-1, -1],
+  ];
+
+  const validMoves: boolean[][] = board.map((row) => row.map(() => false));
+
+  for (let y = 0; y < 8; y++) {
+    for (let x = 0; x < 8; x++) {
+      if (board[y][x] !== 0) continue;
+      for (const [dx, dy] of directions) {
+        let nx = x + dx;
+        let ny = y + dy;
+        let count = 0;
+        while (
+          board[ny] !== undefined &&
+          board[ny][nx] !== undefined &&
+          board[ny][nx] === 2 / turnColor
+        ) {
+          nx += dx;
+          ny += dy;
+          count++;
+        }
+        //一枚でも相手のコマを挟んでいるか
+        if (count > 0 && board[ny] !== undefined && board[ny][nx] === turnColor) {
+          validMoves[y][x] = true;
+          break;
+        }
+      }
+    }
+  }
+
   const clickHandler = (x: number, y: number) => {
-    console.log(x, y);
+    //候補地じゃなかったら置けない
+    //これを消すと上のコードが悪さをして変なところに置ける。=>後で確かめる
+    if (!validMoves[y][x]) return;
+
     const newBoard = structuredClone(board);
 
-    const direcitons = [
-      [0, -1],
-      [1, -1],
-      [1, 0],
-      [1, 1],
-      [0, 1],
-      [-1, 1],
-      [-1, 0],
-      [-1, -1],
-    ];
-
     if (board[y][x] !== 0) return;
-    let flippedAny = false;
-    direcitons.forEach(([dx, dy]) => {
+
+    directions.forEach(([dx, dy]) => {
       let ny = y + dy,
         nx = x + dx;
       const count = [];
@@ -54,12 +86,9 @@ export default function Home() {
           count.forEach(([cx, cy]) => {
             newBoard[cy][cx] = turnColor;
           });
-          flippedAny = true;
         }
       }
     });
-    //少なくとも一方向ひっくり返したか
-    if (!flippedAny) return;
     newBoard[y][x] = turnColor;
     setBoard(newBoard);
     setTurnColor(2 / turnColor);
@@ -69,16 +98,24 @@ export default function Home() {
     <div className={styles.container}>
       <div className={styles.board}>
         {board.map((row, y) =>
-          row.map((color, x) => (
-            <div className={styles.cell} key={`${x}-${y}`} onClick={() => clickHandler(x, y)}>
-              {color !== 0 && (
-                <div
-                  className={styles.stone}
-                  style={{ background: color === 1 ? '#000' : '#fff' }}
-                />
-              )}
-            </div>
-          )),
+          row.map((color, x) => {
+            const isValid = validMoves[y][x];
+            return (
+              <div
+                key={`${x}-${y}`}
+                //isValidがtrueなら色がつく
+                className={`${styles.cell} ${isValid ? styles.valid : ''}`}
+                onClick={() => clickHandler(x, y)}
+              >
+                {color !== 0 && (
+                  <div
+                    className={styles.stone}
+                    style={{ background: color === 1 ? '#000' : '#fff' }}
+                  />
+                )}
+              </div>
+            );
+          }),
         )}
       </div>
     </div>

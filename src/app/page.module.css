@@ -25,6 +25,10 @@
   border: 1px solid black;
 }
 
+.valid {
+  background-color: rgb(173 216 230 / 70%);
+}
+
 .stone {
   width: 56px;
   height: 56px;
