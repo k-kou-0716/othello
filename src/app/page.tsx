@@ -35,32 +35,30 @@ export default function Home() {
     direcitons.forEach(([dx, dy]) => {
       let ny = y + dy,
         nx = x + dx;
-      const toFlip = [];
+      const count = [];
       while (
-        ny >= 0 &&
-        ny < board.length &&
-        nx >= 0 &&
-        nx < board[0].length &&
+        board[ny] !== undefined &&
+        board[ny][nx] !== undefined &&
         board[ny][nx] === 2 / turnColor
       ) {
-        toFlip.push([nx, ny]);
+        count.push([nx, ny]);
         ny += dy;
         nx += dx;
         if (
-          toFlip.length > 0 &&
-          ny >= 0 &&
-          ny < board.length &&
-          nx >= 0 &&
-          nx < board[0].length &&
+          //一枚でも相手の駒を挟んでいるか
+          count.length > 0 &&
+          board[ny] !== undefined &&
+          board[ny][nx] !== undefined &&
           board[ny][nx] === turnColor
         ) {
-          toFlip.forEach(([fx, fy]) => {
-            newBoard[fy][fx] = turnColor;
+          count.forEach(([cx, cy]) => {
+            newBoard[cy][cx] = turnColor;
           });
           flippedAny = true;
         }
       }
     });
+    //少なくとも一方向ひっくり返したか
     if (!flippedAny) return;
     newBoard[y][x] = turnColor;
     setBoard(newBoard);
