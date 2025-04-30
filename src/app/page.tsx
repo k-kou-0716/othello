@@ -29,8 +29,8 @@ export default function Home() {
     [-1, -1],
   ];
 
-  const validMoves: boolean[][] = board.map((row) => row.map(() => false));
-
+  //候補地を表示
+  const validMoves = board.map((row) => row.map(() => false));
   for (let y = 0; y < 8; y++) {
     for (let x = 0; x < 8; x++) {
       if (board[y][x] !== 0) continue;
@@ -47,7 +47,7 @@ export default function Home() {
           ny += dy;
           count++;
         }
-        //一枚でも相手のコマを挟んでいるか
+        //一枚でも相手の駒を挟んでいるか
         if (count > 0 && board[ny] !== undefined && board[ny][nx] === turnColor) {
           validMoves[y][x] = true;
           break;
@@ -56,15 +56,10 @@ export default function Home() {
     }
   }
 
+  //オセロのプログラム
   const clickHandler = (x: number, y: number) => {
-    //候補地じゃなかったら置けない
-    //これを消すと上のコードが悪さをして変なところに置ける。=>後で確かめる
-    if (!validMoves[y][x]) return;
-
     const newBoard = structuredClone(board);
-
     if (board[y][x] !== 0) return;
-
     directions.forEach(([dx, dy]) => {
       let ny = y + dy,
         nx = x + dx;
@@ -87,13 +82,15 @@ export default function Home() {
           count.forEach(([cx, cy]) => {
             newBoard[cy][cx] = turnColor;
           });
+          newBoard[y][x] = turnColor;
+          setTurnColor(2 / turnColor);
         }
       }
     });
-    newBoard[y][x] = turnColor;
     setBoard(newBoard);
-    setTurnColor(2 / turnColor);
   };
+
+  //駒の数チェック
 
   return (
     <div className={styles.container}>
