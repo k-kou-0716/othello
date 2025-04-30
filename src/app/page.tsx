@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import styles from './page.module.css';
 
 export default function Home() {
@@ -91,45 +91,30 @@ export default function Home() {
   };
 
   //駒の数チェック
-  const [black, white] = useMemo(() => {
-    let b = 0,
-      w = 0;
-    board.forEach((row) =>
-      row.forEach((cell) => {
-        if (cell === 1) b++;
-        else if (cell === 2) w++;
-      }),
-    );
-    return [b, w] as const;
-  }, [board]);
 
   return (
     <div className={styles.container}>
-      <div className={styles.score}>
-        <span className={styles.black}>● 黒: {black}</span>
-        <span className={styles.white}>○ 白: {white}</span>
-        <div className={styles.board}>
-          {board.map((row, y) =>
-            row.map((color, x) => {
-              const isValid = validMoves[y][x];
-              return (
-                <div
-                  key={`${x}-${y}`}
-                  //isValidがtrueなら色がつく
-                  className={`${styles.cell} ${isValid ? styles.valid : ''}`}
-                  onClick={() => clickHandler(x, y)}
-                >
-                  {color !== 0 && (
-                    <div
-                      className={styles.stone}
-                      style={{ background: color === 1 ? '#000' : '#fff' }}
-                    />
-                  )}
-                </div>
-              );
-            }),
-          )}
-        </div>
+      <div className={styles.board}>
+        {board.map((row, y) =>
+          row.map((color, x) => {
+            const isValid = validMoves[y][x];
+            return (
+              <div
+                key={`${x}-${y}`}
+                //isValidがtrueなら色がつく
+                className={`${styles.cell} ${isValid ? styles.valid : ''}`}
+                onClick={() => clickHandler(x, y)}
+              >
+                {color !== 0 && (
+                  <div
+                    className={styles.stone}
+                    style={{ background: color === 1 ? '#000' : '#fff' }}
+                  />
+                )}
+              </div>
+            );
+          }),
+        )}
       </div>
     </div>
   );
