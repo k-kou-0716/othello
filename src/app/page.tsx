@@ -5,7 +5,6 @@ import { useState } from 'react';
 import styles from './page.module.css';
 
 export default function Home() {
-  //波線の原因を探す
   const [turnColor, setTurnColor] = useState<number>(1);
   const [board, setBoard] = useState<number[][]>([
     [0, 0, 0, 0, 0, 0, 0, 0],
@@ -91,9 +90,28 @@ export default function Home() {
   };
 
   //駒の数チェック
+  let b = 0,
+    w = 0;
+  for (let y = 0; y < 8; y++) {
+    for (let x = 0; x < 8; x++) {
+      if (board[y][x] === 1) {
+        b++;
+      }
+      if (board[y][x] === 2) {
+        w++;
+      }
+    }
+  }
+  console.log(b);
+  console.log(w);
 
   return (
     <div className={styles.container}>
+      <div className={styles.scoreBoard}>
+        <div className={styles.scoreText}>
+          Black:{b} vs White:{w}
+        </div>
+      </div>
       <div className={styles.board}>
         {board.map((row, y) =>
           row.map((color, x) => {
