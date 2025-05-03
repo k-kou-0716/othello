@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './page.module.css';
 
 export default function Home() {
@@ -55,6 +55,16 @@ export default function Home() {
     }
   }
 
+  useEffect(() => {
+    // 有効手が一つでもあるか？
+    const hasMove = validMoves.some((row) => row.some((v) => v));
+    if (!hasMove) {
+      // パス処理
+      alert('パス');
+      setTurnColor(2 / turnColor);
+    }
+  }, [board, turnColor, validMoves]);
+
   //オセロのプログラム
   const clickHandler = (x: number, y: number) => {
     const newBoard = structuredClone(board);
@@ -92,24 +102,18 @@ export default function Home() {
   //駒の数チェック
   let b = 0,
     w = 0;
-  for (let y = 0; y < 8; y++) {
-    for (let x = 0; x < 8; x++) {
-      if (board[y][x] === 1) {
-        b++;
-      }
-      if (board[y][x] === 2) {
-        w++;
-      }
-    }
-  }
-  console.log(b);
-  console.log(w);
+  board.forEach((row) =>
+    row.forEach((cell) => {
+      if (cell === 1) b++;
+      if (cell === 2) w++;
+    }),
+  );
 
   return (
     <div className={styles.container}>
       <div className={styles.scoreBoard}>
         <div className={styles.scoreText}>
-          Black:{b} vs White:{w}
+          黒{b} : 白{w}
         </div>
       </div>
       <div className={styles.board}>
