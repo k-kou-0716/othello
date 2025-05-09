@@ -44,7 +44,7 @@
   border: 1px solid black;
 }
 
-.valid {
+.candidate {
   background-color: rgb(173 216 230 / 70%);
 }
 

@@ -1,7 +1,6 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import styles from './page.module.css';
 
 export default function Home() {
@@ -28,42 +27,64 @@ export default function Home() {
     [-1, -1],
   ];
 
-  //候補地を表示
-  const validMoves = board.map((row) => row.map(() => false));
-  for (let y = 0; y < 8; y++) {
-    for (let x = 0; x < 8; x++) {
-      if (board[y][x] !== 0) continue;
-      for (const [dx, dy] of directions) {
-        let nx = x + dx;
-        let ny = y + dy;
-        let count = 0;
-        while (
-          board[ny] !== undefined &&
-          board[ny][nx] !== undefined &&
-          board[ny][nx] === 2 / turnColor
-        ) {
-          nx += dx;
-          ny += dy;
-          count++;
-        }
-        //一枚でも相手の駒を挟んでいるか
-        if (count > 0 && board[ny] !== undefined && board[ny][nx] === turnColor) {
-          validMoves[y][x] = true;
-          break;
+  const calcBoardWithCandidates = (board: number[][]) => {
+    const newBoard = structuredClone(board);
+    for (let y = 0; y < 8; y++) {
+      for (let x = 0; x < 8; x++) {
+        if (board[y][x] !== 0) continue;
+        for (const [dx, dy] of directions) {
+          let nx = x + dx;
+          let ny = y + dy;
+          let count = 0;
+          while (
+            board[ny] !== undefined &&
+            board[ny][nx] !== undefined &&
+            board[ny][nx] === 2 / turnColor
+          ) {
+            nx += dx;
+            ny += dy;
+            count++;
+          }
+          //一枚でも相手の駒を挟んでいるか
+          if (count > 0 && board[ny] !== undefined && board[ny][nx] === turnColor) {
+            newBoard[y][x] = 3;
+            break;
+          }
         }
       }
     }
-  }
+    return newBoard;
+  };
 
-  useEffect(() => {
-    // 有効手が一つでもあるか？
-    const hasMove = validMoves.some((row) => row.some((v) => v));
-    if (!hasMove) {
-      // パス処理
-      alert('パス');
-      setTurnColor(2 / turnColor);
-    }
-  }, [board, turnColor, validMoves]);
+  console.log(calcBoardWithCandidates(board));
+  console.log(board);
+
+  // //候補地を表示
+  // const candidate = board.map((row) => row.map(() => false));
+  // for (let y = 0; y < 8; y++) {
+  //   for (let x = 0; x < 8; x++) {
+  //     if (board[y][x] !== 0) continue;
+  //     for (const [dx, dy] of directions) {
+  //       let nx = x + dx;
+  //       let ny = y + dy;
+  //       let count = 0;
+  //       while (
+  //         board[ny] !== undefined &&
+  //         board[ny][nx] !== undefined &&
+  //         board[ny][nx] === 2 / turnColor
+  //       ) {
+  //         nx += dx;
+  //         ny += dy;
+  //         count++;
+  //       }
+  //       //一枚でも相手の駒を挟んでいるか
+  //       if (count > 0 && board[ny] !== undefined && board[ny][nx] === turnColor) {
+  //         candidate[y][x] = true;
+  //         break;
+  //       }
+  //     }
+  //   }
+  // }
 
   //オセロのプログラム
   const clickHandler = (x: number, y: number) => {
@@ -112,17 +133,17 @@ export default function Home() {
         </div>
       </div>
       <div className={styles.board}>
-        {board.map((row, y) =>
+        {calcBoardWithCandidates(board).map((row, y) =>
           row.map((color, x) => {
-            const isValid = validMoves[y][x];
+            // const tf = candidate[y][x];
             return (
               <div
                 key={`${x}-${y}`}
                 //isValidがtrueなら色がつく
-                className={`${styles.cell} ${isValid ? styles.valid : ''}`}
+                className={`${styles.cell} ${color === 3 ? styles.candidate : ''}`}
                 onClick={() => clickHandler(x, y)}
               >
-                {color !== 0 && (
+                {color !== 0 && color !== 3 && (
                   <div
                     className={styles.stone}
                     style={{ background: color === 1 ? '#000' : '#fff' }}
