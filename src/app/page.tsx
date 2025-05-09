@@ -100,20 +100,15 @@ export default function Home() {
   };
 
   //駒の数チェック
-  let b = 0,
-    w = 0;
-  board.forEach((row) =>
-    row.forEach((cell) => {
-      if (cell === 1) b++;
-      if (cell === 2) w++;
-    }),
-  );
+  const flatBoard = board.flat();
+  const b = flatBoard.filter((cell) => cell === 1);
+  const w = flatBoard.filter((cell) => cell === 2);
 
   return (
     <div className={styles.container}>
       <div className={styles.scoreBoard}>
         <div className={styles.scoreText}>
-          黒{b} : 白{w}
+          黒{b.length} : 白{w.length}
         </div>
       </div>
       <div className={styles.board}>
