@@ -27,15 +27,16 @@ export default function Home() {
     [-1, -1],
   ];
 
+  //候補地を表示
   const calcBoardWithCandidates = (board: number[][]) => {
     const newBoard = structuredClone(board);
     for (let y = 0; y < 8; y++) {
       for (let x = 0; x < 8; x++) {
         if (board[y][x] !== 0) continue;
         for (const [dx, dy] of directions) {
-          let nx = x + dx;
-          let ny = y + dy;
-          let count = 0;
+          let nx = x + dx,
+            ny = y + dy,
+            count = 0;
           while (
             board[ny] !== undefined &&
             board[ny][nx] !== undefined &&
@@ -55,36 +56,6 @@ export default function Home() {
     }
     return newBoard;
   };
-
-  console.log(calcBoardWithCandidates(board));
-  console.log(board);
-
-  // //候補地を表示
-  // const candidate = board.map((row) => row.map(() => false));
-  // for (let y = 0; y < 8; y++) {
-  //   for (let x = 0; x < 8; x++) {
-  //     if (board[y][x] !== 0) continue;
-  //     for (const [dx, dy] of directions) {
-  //       let nx = x + dx;
-  //       let ny = y + dy;
-  //       let count = 0;
-  //       while (
-  //         board[ny] !== undefined &&
-  //         board[ny][nx] !== undefined &&
-  //         board[ny][nx] === 2 / turnColor
-  //       ) {
-  //         nx += dx;
-  //         ny += dy;
-  //         count++;
-  //       }
-  //       //一枚でも相手の駒を挟んでいるか
-  //       if (count > 0 && board[ny] !== undefined && board[ny][nx] === turnColor) {
-  //         candidate[y][x] = true;
-  //         break;
-  //       }
-  //     }
-  //   }
-  // }
 
   //オセロのプログラム
   const clickHandler = (x: number, y: number) => {
@@ -122,24 +93,23 @@ export default function Home() {
 
   //駒の数チェック
   const flatBoard = board.flat();
-  const b = flatBoard.filter((cell) => cell === 1);
-  const w = flatBoard.filter((cell) => cell === 2);
+  const black = flatBoard.filter((cell) => cell === 1).length;
+  const white = flatBoard.filter((cell) => cell === 2).length;
 
   return (
     <div className={styles.container}>
       <div className={styles.scoreBoard}>
         <div className={styles.scoreText}>
-          黒{b.length} : 白{w.length}
+          黒{black} : 白{white}
         </div>
       </div>
       <div className={styles.board}>
         {calcBoardWithCandidates(board).map((row, y) =>
           row.map((color, x) => {
-            // const tf = candidate[y][x];
             return (
               <div
                 key={`${x}-${y}`}
-                //isValidがtrueなら色がつく
+                //newBoardが3なら色がつく
                 className={`${styles.cell} ${color === 3 ? styles.candidate : ''}`}
                 onClick={() => clickHandler(x, y)}
               >
